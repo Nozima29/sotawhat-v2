@@ -5,6 +5,7 @@ import urllib.error
 import urllib.request
 import warnings
 
+import html
 import nltk
 from nltk.tokenize import word_tokenize
 from six.moves.html_parser import HTMLParser
@@ -15,6 +16,7 @@ try:
 except LookupError:
     nltk.download('punkt')
 
+nltk.download('punkt_tab')
 h = HTMLParser()
 
 AUTHOR_TAG = '<a href="/search/?searchtype=author'
@@ -183,9 +185,9 @@ def extract_line(abstract, keyword, limit):
 
 def get_report(paper, keyword):
     if keyword in paper['abstract'].lower():
-        title = h.unescape(paper['title'])
+        title = html.unescape(paper['title'])
         headline = '{} ({} - {})\n'.format(title, paper['authors'][0], paper['date'])
-        abstract = h.unescape(paper['abstract'])
+        abstract = html.unescape(paper['abstract'])
         extract, has_number = extract_line(abstract, keyword, 280 - len(headline))
         if extract:
             report = headline + extract + '\nLink: {}'.format(paper['main_page'])
